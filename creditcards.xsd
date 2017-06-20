@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="creditcards">
+        <xsd:complexType>
+            <xsd:sequence>
+                <!--To allow an element to appear an unlimited number of times, use the maxOccurs="unbounded" statement minOccurs="1": contain  at least one-->
+                <xsd:element name="creditcard" type="cardDetailType" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="cardDetailType">
+        <xsd:sequence>
+            <xsd:element name="cardno">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:integer">
+                        <xsd:minInclusive value="1000000000000000" />
+                        <xsd:totalDigits value="16"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="type">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[VMA]" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="status">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[GSF]" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="beaconscore">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:integer">
+                        <xsd:minInclusive value="500" />
+                        <xsd:maxInclusive value="850" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="name">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[A-Z][a-zA-Z]*( [A-Z][a-zA-Z]*)*" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="expirydate" type="xsd:date" />
+
+            <xsd:element name="creditlimit">
+                <xsd:complexType>
+                    <!-- must be a whole number greater than or equal to zero. -->
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:nonNegativeInteger">
+                            <!--Can optionally have a review attribute, which must have the value of “review”.-->
+                            <xsd:attribute name="review" fixed="review" type="xsd:string" use="optional"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <!--The quantity elements must contain an integer that is greater than or equal to zero.-->
+            <xsd:element name="balance" type="moneyType" />
+            <xsd:element name="transaction" type="transactionType" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element name="reversingtransaction" type="transactionType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="transactionType">
+        <xsd:sequence>
+            <xsd:element name="type">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:pattern value="[PEO]" />
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:element>
+            <xsd:element name="vendorname" type="xsd:string" />
+            <xsd:element name="vendorurl" minOccurs="0" type="xsd:anyURI" />
+            <xsd:element name="date" type="xsd:dateTime" />
+            <xsd:element name="amount" type="moneyType" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="moneyType">
+        <xsd:simpleContent>
+            <!-- floating point number (positive or negative) -->
+            <xsd:extension base="xsd:float">
+                <!--Attributes are optional by default. To specify that the attribute is required, use the "use" attribute:use="required"-->
+                <xsd:attribute name="cur" use="required" >
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:enumeration value="CAD"/>
+                            <xsd:enumeration value="USD"/>
+                            <xsd:enumeration value="EUR"/>
+                            <xsd:enumeration value="CNY"/>
+                            <xsd:enumeration value="KRW"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+</xsd:schema>
